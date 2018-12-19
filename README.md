@@ -13,10 +13,7 @@ docker run -p 9090:9090 -v $(pwd)/prometheus-data:/prometheus-data prom/promethe
 ### Start node exporter
 
 ```bash
-wget https://github.com/prometheus/node_exporter/releases/download/v0.16.0-rc.1/node_exporter-0.16.0-rc.1.linux-amd64.tar.gz
-tar xvzf node_exporter-0.16.0-rc.1.linux-amd64.tar.gz
-cd node_exporter-0.16.0-rc.1.linux-amd64
-./node_exporter
+docker run -p 9100:9100 quay.io/prometheus/node-exporter
 ```
 
 ### View Dashboard
