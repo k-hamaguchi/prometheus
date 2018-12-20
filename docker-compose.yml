@@ -3,13 +3,12 @@ version: '3'
 services:
   node-exporter:
     image: quay.io/prometheus/node-exporter
-
-  prometheus:
-    image: prom/prometheus
     ports:
-      - 9090:9090
+      - 9100:9100
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
 
   cadvisor:
     image: google/cadvisor:latest
@@ -22,3 +21,15 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
       - /cgroup:/cgroup:ro
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
