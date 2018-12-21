@@ -43,3 +43,10 @@ scrape_configs:
         - redis-exporter:9121
         labels:
           group: redis
+
+  - job_name: nginx
+    static_configs:
+      - targets:
+        - nginx-exporter:9113
+        labels:
+          group: nginx

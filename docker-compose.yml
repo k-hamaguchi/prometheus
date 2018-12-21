@@ -1,6 +1,17 @@
 version: '3'
 
 services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/stub_status.conf:/etc/nginx/conf.d/stub_status.conf
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:0.2.0
+    command: -nginx.scrape-uri http://nginx:8080/stub_status
+
   redis:
     image: redis:alpine
     ports:
@@ -43,8 +54,6 @@ services:
       - '--path.sysfs=/host/sys'
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    ports:
-      - 9100:9100
 
   cadvisor:
     image: google/cadvisor:latest
@@ -61,6 +70,7 @@ services:
   prometheus:
     image: prom/prometheus
     depends_on:
+      - nginx-exporter
       - rabbitmq-exporter
       - redis-exporter
       - node-exporter
@@ -68,7 +78,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
 
   grafana:
     image: grafana/grafana
