@@ -1,10 +1,27 @@
 version: '3'
 
 services:
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    hostname: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBIT_URL: http://rabbitmq:15672
+      RABBIT_USER: guest
+      RABBIT_PASSWORD: guest
+      PUBLISH_PORT: 9090
+      OUTPUT_FORMAT: JSON
+      LOG_LEVEL: debug
+
   node-exporter:
     image: quay.io/prometheus/node-exporter
-    ports:
-      - 9100:9100
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -24,6 +41,10 @@ services:
 
   prometheus:
     image: prom/prometheus
+    depends_on:
+      - rabbitmq-exporter
+      - node-exporter
+      - cadvisor
     ports:
       - 9090:9090
     volumes:

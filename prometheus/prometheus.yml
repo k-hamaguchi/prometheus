@@ -29,3 +29,10 @@ scrape_configs:
         - node-exporter:9100
         labels:
           group: docker-host
+
+  - job_name: rabbitmq
+    static_configs:
+      - targets:
+        - rabbitmq-exporter:9090
+        labels:
+          group: rabbitmq

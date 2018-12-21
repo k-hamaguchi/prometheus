@@ -25,3 +25,11 @@ Access to `http://[Docker Host]:9090/`.
 ```bash
 docker-compose up
 ```
+
+## Monitor RabbitMQ
+
+```bash
+cd ../rabbitmq/docker
+docker run -it --rm -v $(pwd)/client:/go golang:alpine /go/bin/send
+docker run -it --rm -v $(pwd)/client:/go golang:alpine /go/bin/receive
+```
