@@ -36,3 +36,10 @@ scrape_configs:
         - rabbitmq-exporter:9090
         labels:
           group: rabbitmq
+
+  - job_name: redis
+    static_configs:
+      - targets:
+        - redis-exporter:9121
+        labels:
+          group: redis

@@ -33,3 +33,15 @@ cd ../rabbitmq/docker
 docker run -it --rm -v $(pwd)/client:/go golang:alpine /go/bin/send
 docker run -it --rm -v $(pwd)/client:/go golang:alpine /go/bin/receive
 ```
+
+## Monitor Redis
+
+```bash
+$ docker-compose exec redis redis-cli set foo FOO ex 10
+OK
+$ docker-compose exec redis redis-cli get foo
+"FOO"
+$ sleep 10
+$ docker-compose exec redis redis-cli get foo
+(nil)
+```
