@@ -1,16 +1,43 @@
 version: '3'
 
 services:
-  nginx:
-    image: nginx:alpine
+  haproxy:
+    image: haproxy:alpine
+    depends_on:
+      - nginx_1
+      - nginx_2
     ports:
       - 80:80
     volumes:
-      - ./nginx/stub_status.conf:/etc/nginx/conf.d/stub_status.conf
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
 
-  nginx-exporter:
+  haproxy-exporter:
+    image: quay.io/prometheus/haproxy-exporter:v0.9.0
+    depends_on:
+      - haproxy
+    command: --haproxy.scrape-uri="http://haproxy:9000/stats?;csv"
+
+  nginx_1:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/stub_status.conf:/etc/nginx/conf.d/stub_status.conf:ro
+
+  nginx-exporter_1:
     image: nginx/nginx-prometheus-exporter:0.2.0
-    command: -nginx.scrape-uri http://nginx:8080/stub_status
+    depends_on:
+      - nginx_1
+    command: -nginx.scrape-uri http://nginx_1:8080/stub_status
+
+  nginx_2:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/stub_status.conf:/etc/nginx/conf.d/stub_status.conf:ro
+
+  nginx-exporter_2:
+    image: nginx/nginx-prometheus-exporter:0.2.0
+    depends_on:
+      - nginx_2
+    command: -nginx.scrape-uri http://nginx_2:8080/stub_status
 
   redis:
     image: redis:alpine
@@ -57,8 +84,6 @@ services:
 
   cadvisor:
     image: google/cadvisor:latest
-    ports:
-      - 8080:8080
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -70,7 +95,8 @@ services:
   prometheus:
     image: prom/prometheus
     depends_on:
-      - nginx-exporter
+      - nginx-exporter_1
+      - nginx-exporter_2
       - rabbitmq-exporter
       - redis-exporter
       - node-exporter
