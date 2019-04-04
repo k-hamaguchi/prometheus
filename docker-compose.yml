@@ -66,7 +66,7 @@ services:
       RABBIT_URL: http://rabbitmq:15672
       RABBIT_USER: guest
       RABBIT_PASSWORD: guest
-      PUBLISH_PORT: 9090
+      PUBLISH_PORT: 9419
       OUTPUT_FORMAT: JSON
       LOG_LEVEL: debug
 
