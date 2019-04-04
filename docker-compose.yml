@@ -82,16 +82,6 @@ services:
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
 
-  cadvisor:
-    image: google/cadvisor:latest
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-      - /cgroup:/cgroup:ro
-
   prometheus:
     image: prom/prometheus
     depends_on:
@@ -100,7 +90,6 @@ services:
       - rabbitmq-exporter
       - redis-exporter
       - node-exporter
-      - cadvisor
     ports:
       - 9090:9090
     volumes:

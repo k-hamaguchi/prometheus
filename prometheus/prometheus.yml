@@ -16,13 +16,6 @@ scrape_configs:
         labels:
           group: prometheus
 
-  - job_name: docker
-    static_configs:
-      - targets:
-        - cadvisor:8080
-        labels:
-          group: docker-container
-
   - job_name: docker-host
     static_configs:
       - targets:
